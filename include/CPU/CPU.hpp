@@ -8,6 +8,9 @@
 #include "CPU/ALU.hpp"
 
 #include <vector>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 namespace CPU {
     class CPU {
@@ -24,6 +27,7 @@ namespace CPU {
             void clock();
             void reset();
             void loadProgram(const std::vector<Bit16>& program);
+            void loadProgramFromFile(const std::string& filename);
             bool isHalted();
             Bit16 readRegister(size_t index) const;
             Bit16 readMemory(const Bit16& addr) const;

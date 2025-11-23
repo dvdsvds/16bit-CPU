@@ -43,6 +43,9 @@ namespace CPU {
         bool active = gate::NOT(halted);
         Bit16 currPC = pc.read();
         Bit16 readedInst = mem.read(currPC);
+        std::cout << "Read instruction at PC=" << utils::BitToInt<16>(currPC) 
+          << ": 0x" << std::hex << utils::BitToInt<16>(readedInst) << std::dec
+          << std::endl;
         cu.loadInst(readedInst, false);
         cu.loadInst(readedInst, true);
         auto decodedInst = cu.getDecodedInst();
@@ -55,6 +58,11 @@ namespace CPU {
         Bit16 imm = {};
         for(size_t i = 0; i < BIT6; ++i) {
             imm[i] = decodedInst.immediate[i]; 
+        }
+
+        bool sign_bit = decodedInst.immediate[5];
+        for(size_t i = BIT6; i < BIT16; ++i) {
+            imm[i] = sign_bit;
         }
 
         bool is_halt = gate::AND(gate::AND(decodedInst.opcode[3], decodedInst.opcode[2]), gate::AND(decodedInst.opcode[1], decodedInst.opcode[0]));
@@ -81,9 +89,35 @@ namespace CPU {
         for(size_t i = 0; i < BIT12; ++i) {
             jmp_addr[i] = decodedInst.address[i];
         }
+
+        Bit16 next_pc = adder::Incrementor(currPC).sum;
+        Bit16 new_pc = selector::MUX(next_pc, jmp_addr, should_jmp);
  
-        pc.update(jmp_addr, should_jmp, false);
-        pc.update(jmp_addr, should_jmp, true);
+        pc.update(new_pc, true, false);
+        pc.update(new_pc, true, true);
     }
 
+    void CPU::loadProgramFromFile(const std::string& filename) {
+        std::ifstream file(filename);
+        if(!file.is_open()) {
+            throw std::runtime_error("Cannot open file: " + filename);
+        }
+
+        std::string line;
+        std::vector<Bit16> program;
+
+        while(std::getline(file, line)) {
+            if(line.empty()) {
+                continue;
+            }
+
+            int value = std::stoi(line, nullptr, 16);
+            Bit16 inst = utils::IntToBit16(value);
+
+            program.push_back(inst);
+        }
+
+        file.close();
+        loadProgram(program);
+    }
 }
