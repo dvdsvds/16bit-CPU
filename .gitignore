@@ -1,0 +1,4 @@
+.vscode/
+build/
+note.txt
+test.cpp
