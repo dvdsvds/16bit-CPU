@@ -10,7 +10,7 @@ A Complete 16-bit CPU Simulator Built from Gate Level
 
 Choose your language / 언어를 선택하세요:
 
-- **[🇰🇷 한국어 문서 (Korean)](docs/README_KR.md)**
+- **[🇰🇷 한국어 문서 (Korean)](docs/README_KOR.md)**
 - **[🇺🇸 English Documentation](docs/README_EN.md)**
 
 ---
