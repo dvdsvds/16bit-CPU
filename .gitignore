@@ -3,3 +3,4 @@ build/
 note.txt
 test.cpp
 Assembler/
+asm-ide/
